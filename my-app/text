@@ -1,0 +1,220 @@
+<!-- {current_user && current_user ? (
+
+    <>
+      <li className="nav-item">
+        <Link to="/reviews" className="nav-link active">
+          Reviews
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link to="/addbike" className="nav-link">
+          AddBike
+        </Link>
+      </li>
+      <li className="nav-item dropdown">
+        <Link
+          to="/profile"
+          className="nav-link active dropdown-toggle"
+          href="#"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Profile
+        </Link>
+        <ul className="dropdown-menu">
+          <li>
+            <Link to="/profile" className="dropdown-item" href="#">
+              Profile
+            </Link>
+          </li>
+          <li>
+            <hr className="dropdown-divider" />
+          </li>
+          <li>
+            <a className="dropdown-item" onClick={() => logout()}>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </li>
+    </>
+  ) : (
+    <>
+    <li className="nav-item">
+        <Link to="/" className="nav-link active" aria-current="page">
+          Home
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link to="/login" className="nav-link active">
+          Login
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link to="/register" className="nav-link active">
+          Register
+        </Link>
+      </li>
+    </>
+  )}
+   -->
+
+
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import NavBar from "../layout/NavBar";
+import { WishlistContext } from "../context/WishlistContext";
+
+function DestinationDetail() {
+  const [currentDestination, setCurrentDestination] = useState(null);
+  const { addToWishlist } = useContext(WishlistContext);
+  const [showAlert, setShowAlert] = useState(false);
+  const { id } = useParams();
+
+  useEffect(() => {
+    fetch(`/destinations/${id}`)
+      .then((res) => res.json())
+      .then((response) => {
+        setCurrentDestination(response);
+      })
+      .catch((error) => {
+        console.error("Error fetching destination by ID:", error);
+      });
+  }, [id]);
+
+  if (!currentDestination) {
+    return <div>Loading...</div>;
+  }
+
+  const handleAddToWishlist = () => {
+    addToWishlist(currentDestination);
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
+  };
+
+  return (
+    <>
+      <NavBar />
+      <div className="container-fluid">
+        {showAlert && (
+          <div
+            className="alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3"
+            role="alert"
+            style={{ zIndex: 9999 }}
+          >
+            Added to Wishlist!{" "}
+            <span className="bi bi-check-circle-fill"></span>
+          </div>
+        )}
+
+        <div className="row">
+          <div className="col">
+            <img
+              src={currentDestination.image_url}
+              className="img-fluid"
+              alt={currentDestination.name}
+              style={{ marginBottom: "1rem" }}
+            />
+            <h5>{currentDestination.name}</h5>
+            <p>{currentDestination.description}</p>
+          </div>
+        </div>
+
+        <div className="text-center mt-4">
+          <Link
+            to="/wishlist"
+            className="btn btn-primary w-75"
+            onClick={handleAddToWishlist}
+            style={{ fontSize: "1.2rem" }}
+          >
+            Add to Wishlist
+          </Link>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default DestinationDetail;
+
+
+// import { createContext, useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import Swal from "sweetalert2";
+
+// export const PostContext = createContext();
+
+// export function PostProvider({ children }) {
+//   const nav = useNavigate();
+//   const [onchange, setonchange] = useState(false);
+//   const [posts, setPosts] = useState();
+
+//   // // AddBike
+//   // const AddBike = (title, description, image, price) => {
+//   //   fetch("/newbike", {
+//   //     method: "POST",
+//   //     headers: { "Content-Type": "application/json" },
+//   //     body: JSON.stringify({
+//   //       title: title,
+//   //       description: description,
+//   //       price: price,
+//   //       image: image
+//   //     }),
+//   //   })
+//   //     .then((res) => res.json())
+//   //     .then((response) => {
+//   //       console.log(response);
+//   //       if  (response.success) {
+//   //         nav("/");
+//   //         Swal.fire("Success", response.success, "success");
+//   //         setonchange(!onchange);
+          
+//   //       } else if (response.error) {
+//   //         Swal.fire("Error", response.error, "error");
+//   //       } else {
+//   //         Swal.fire("Error", "Something went wrong", "error");
+//   //       }
+//   //     });
+//   // };
+//   // // Delete bike
+//   // const deleteBike = (id) => {
+//   //   fetch(`/deletemoto/${id}`, {
+//   //     method: "DELETE",
+//   //   })
+//   //     .then((res) => res.json())
+//   //     .then((response) => {
+//   //       setonchange(!onchange);
+//   //       console.log(response);
+//   //       nav("/");
+//   //       Swal.fire("Success", "Delete success", "success");
+//   //       nav("/");
+//   //     });
+//   // };
+
+//   // Fetch posts
+//   useEffect(() => {
+//     fetch("/", {
+//       method: "GET",
+//       headers: { "Content-Type": "application/json" },
+//     })
+//       .then((res) => res.json())
+//       .then((response) => {
+//         setPosts(response);
+//       });
+//   }, [onchange]);
+
+//   const contextData = {
+//     posts,
+//     deleteBike,
+//     AddBike,
+//   };
+//   return (
+//     <PostContext.Provider value={contextData}>
+//       {children}
+//       {/* <AddBike /> */}
+//     </PostContext.Provider>
+//   );
+// }
