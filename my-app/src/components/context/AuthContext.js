@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { baseUrl } from "../../config";
 
 export const AuthContext = createContext();
 
@@ -11,7 +12,7 @@ export function AuthProvider({ children }) {
 
   // Login
   const login = (email, password) => {
-    fetch("https://motoshop.onrender.com/login", {
+    fetch(`${baseUrl}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -22,6 +23,17 @@ export function AuthProvider({ children }) {
         if (response.error) {
           Swal.fire("Error", response.error, "error");
         } else if (response.success) {
+          // Fetch the current user after successful login
+          fetch(`${baseUrl}/users/me`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          })
+            .then((res) => res.json())
+            .then((userResponse) => {
+              if (userResponse.currentUser) {
+                setCurrentUser(userResponse.currentUser);
+              }
+            });
           nav("/");
           Swal.fire("Success", response.success, "success");
           setOnChange(!onChange);
@@ -63,7 +75,7 @@ export function AuthProvider({ children }) {
 
   // Logout
   const logout = () => {
-    fetch("/logout", {
+    fetch(`${baseUrl}/logout`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     })
@@ -78,7 +90,7 @@ export function AuthProvider({ children }) {
 
   // Fetch current user
   useEffect(() => {
-    fetch("/currentuser", {
+    fetch(`${baseUrl}/users/me`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })

@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { MotorcyclesContext } from "../components/context/MotorcyclesContext";
+import { baseUrl } from "../config";
 
 export default function SingleBike() {
   const { motorcycles, deleteMotorcycle } = useContext(MotorcyclesContext);
@@ -25,7 +26,7 @@ export default function SingleBike() {
   }, [id, getMotorcycleById]);
 
   useEffect(() => {
-    fetch(`/motorcycles/${id}`)
+    fetch(`${baseUrl}/bikes/${id}`)
       .then((res) => res.json())
       .then((response) => {
         setSingleBike(response);
@@ -63,9 +64,8 @@ export default function SingleBike() {
     e.preventDefault();
   
     // Get the updated form values
-    const updatedTitle = e.target.elements.title.value;
+    const updatedTitle = e.target.elements.name.value;
     const updatedDescription = e.target.elements.description.value;
-    const updatedPrice = e.target.elements.price.value;
     const updatedImage = e.target.elements.image.value;
   
     // Create the updated motorcycle object
@@ -73,7 +73,6 @@ export default function SingleBike() {
       id: singleBike.id,
       title: updatedTitle,
       description: updatedDescription,
-      price: updatedPrice,
       image: updatedImage,
     };
   
@@ -106,9 +105,8 @@ export default function SingleBike() {
           <div>
             <h3>Motorcycle Details</h3>
             <img src={singleBike.image} className="img-fluid" alt="loading..." />
-            <p>Title: {singleBike.title}</p>
+            <p>Title: {singleBike.name}</p>
             <p>Description: {singleBike.description}</p>
-            <p>Price: {singleBike.price}</p>
             <p>Created At: {singleBike.created_at}</p>
             <p>Created by: {singleBike.user_id}</p>
 
@@ -120,7 +118,7 @@ export default function SingleBike() {
     <label className="form-label">Title</label>
     <input
       type="text"
-      defaultValue={singleBike.title}
+      defaultValue={singleBike.name}
       className="form-control"
       name="title" // Add the name attribute
     />
@@ -132,15 +130,6 @@ export default function SingleBike() {
       defaultValue={singleBike.description}
       className="form-control"
       name="description" // Add the name attribute
-    />
-  </div>
-  <div className="mb-3">
-    <label className="form-label">Price</label>
-    <input
-      type="text"
-      defaultValue={singleBike.price}
-      className="form-control"
-      name="price" // Add the name attribute
     />
   </div>
   <div className="mb-3">

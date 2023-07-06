@@ -10,7 +10,7 @@ function Reviews() {
       <h1 className="text-center">View your reviews</h1>
       <h1 className="text-center">- - - - - - - - - - - - -</h1>
       <div className="container-fluid row">
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 d-flex justify-content-evenly">
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 d-flex justify-content-evenly">
           {motorcycles &&
             motorcycles.map((motorcycle) => (
               <div

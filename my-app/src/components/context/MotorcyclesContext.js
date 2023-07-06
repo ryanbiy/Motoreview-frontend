@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../config";
 
 export const MotorcyclesContext = createContext();
 
@@ -10,7 +11,7 @@ export function MotorcyclesProvider({ children }) {
   const [onchange, setOnchange] = useState(false);
 
   useEffect(() => {
-    fetch("/allmotorcycles")
+    fetch(`${baseUrl}/bikes`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -24,15 +25,14 @@ export function MotorcyclesProvider({ children }) {
       });
   }, [onchange]);
 
-  const addMotorcycle = (title, description, price, image, userId) => {
+  const addMotorcycle = (title, description, image, userId) => {
     return new Promise((resolve, reject) => {
-      fetch("/newbike", {
+      fetch(`${baseUrl}/bikes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: title,
+          name: title,
           description: description,
-          price: price,
           image: image,
           user_id: userId,
         }),

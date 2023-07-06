@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { AuthContext } from '../components/context/AuthContext';
+// import { AuthContext } from '../components/context/AuthContext';
 import { Link } from 'react-router-dom';
+import { baseUrl } from '../config';
 
 function Register() {
-  const { register } = useContext(AuthContext);
+  // const { register } = useContext(AuthContext);
 
-  const [username, setUsername] = useState('');
+  const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -13,12 +14,12 @@ function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    fetch('/signup', {
+    fetch(`${baseUrl}/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, email, password }),
+      body: JSON.stringify({ name, email, password }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -31,7 +32,7 @@ function Register() {
           } else if (data.error) {
             // Login unsuccessful, display error message to the user
             setMessage(data.error);
-            console.log('Login unsuccessful:', data.error);
+            console.log('Signup unsuccessful:', data.error);
           } else if (data.warning) {
             // Missing fields, display warning message to the user
             setMessage(data.warning);
